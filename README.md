@@ -66,6 +66,7 @@ http://192.168.1.142:8800/registration
 ###
 login:
 http://192.168.1.142:8800/login
+
 -req:
 ```
     {
@@ -119,6 +120,7 @@ http://192.168.1.142:8800/display/:user_id
 ###
 Add Address
 http://localhost:8800/addaddress/:user_id
+
 -req:
 ```
   {
@@ -139,6 +141,7 @@ http://localhost:8800/addaddress/:user_id
 ###
 Update Address
 http://192.168.1.142:8800/update/:user_id/addressid/:address_id
+
 -req:
 ```
   {
@@ -170,6 +173,7 @@ http://192.168.1.142:8800/update/:user_id/addressid/:address_id
 ###
 Delete Address
 http://localhost:8800/delete/:user_id/address_id
+
 -res
  ```
  {
