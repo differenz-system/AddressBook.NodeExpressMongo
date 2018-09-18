@@ -9,9 +9,13 @@ The app does the following:
 3. **Create new contact:** User can add a new contact to his address book by filling details here.
 
 ## Pre-requisites
-- [Visual Studio code](https://code.visualstudio.com/)
+
+-[Visual Studio code](https://code.visualstudio.com/)
+
 -[ Node js ](https://nodejs.org/en/)
+
 -[ TypeScript ](http://typescript.org/)
+
 -[ Mongodb ](https://www.npmjs.com/package/mongodb)
 
 
