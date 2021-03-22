@@ -1,98 +1,106 @@
-var express = require('express');
-var url = require('url');
-var bodyParser = require('body-parser');
-var md5 = require('md5');
-var connecation = require('../configuration/mongoconfig');
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var user = require('../model/user_model');
 var address = require('../model/address_model');
-var datetime = new Date();
-var app = express();
-app.use(bodyParser.json());
-var urlencodedParser = bodyParser.urlencoded({ extended: true });
-module.exports = function (app, db) {
-    app.get("/display/:userid", urlencodedParser, function (req, res) {
-        var uid = req.params.userid;
-        address.find({ user_id: uid, is_deleted: 0 })
-            .then(address => {
-            res.send(address);
-        }).catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while retrieving notes."
-            });
-        });
-    });
-    app.post("/addaddress/:userid", urlencodedParser, function (req, res) {
-        var act = req.body.active;
-        var uid = req.params.userid;
-        var a = 0;
-        var date = datetime.getFullYear() + "/" + datetime.getMonth() + "/" + datetime.getDate();
-        if (act) {
-            a = 1;
+module.exports = (app) => {
+    app.get('/getAddressBook', (req, res) => __awaiter(this, void 0, void 0, function* () {
+        try {
+            var data = yield address.find({}, { "_id": 0 });
+            res.json({ 'res': '0', 'msg': 'Address Book Displayed', 'data': data });
         }
-        else {
-            a = 0;
+        catch (error) {
+            res.json({ 'res': '1', 'msg': error.message });
         }
-        address.aggregate([
-            { $sort: { "address_id": -1 } },
-            { $limit: 1 },
-            { $sort: { "address_id": 1 } },
-            { $limit: 1 }
-        ], function (err, result) {
-            if (err) {
-                console.log(err);
+    }));
+    app.get('/getAddressBookByID/:userid', (req, res) => __awaiter(this, void 0, void 0, function* () {
+        try {
+            var data = yield address.find({ user_id: req.params.userid, is_deleted: 0 }, { "_id": 0 });
+            res.json({ 'res': '0', 'msg': 'Successfully Displayed', 'data': data });
+        }
+        catch (error) {
+            res.json({ 'res': '1', 'msg': error.message });
+        }
+    }));
+    app.post('/createAddressBook', (req, res) => __awaiter(this, void 0, void 0, function* () {
+        try {
+            var datetime = new Date();
+            var date = datetime.getFullYear() + "/" + datetime.getMonth() + "/" + datetime.getDate();
+            var a = req.body.isactive == "true" ? 1 : 0;
+            if (!req.body.name) {
+                throw new Error("Please enter name");
+            }
+            else if (!req.body.email) {
+                throw new Error("Please enter email");
+            }
+            else if (!req.body.contact_number) {
+                throw new Error("Please enter Contact Number");
             }
             else {
-                var id = result[0].address_id + 1;
-                var address_data = { _id: null, address_id: id, name: req.body.name, email: req.body.email, contact_number: req.body.contact_number, is_active: a, create_date: date, user_id: req.params.userid, is_deleted: 0 };
-                address.create(address_data, function (err, rows, fields) {
-                    if (err)
-                        throw err;
-                    else {
-                        res.json({ 'res': '0', 'msg': 'successfully insert address' });
+                var data = yield address.create({
+                    name: req.body.name,
+                    email: req.body.email,
+                    contact_number: req.body.contact_number,
+                    is_active: a,
+                    create_date: date,
+                    user_id: req.body.user_id,
+                    is_deleted: 0
+                });
+                res.status(200).json({ 'res': '0', 'msg': 'Data Saved Successfully', 'data': data });
+            }
+        }
+        catch (error) {
+            res.json({ 'res': '1', 'msg': error.message });
+        }
+    }));
+    app.put("/updateAddressBook/:userid/:addressid", (req, res) => __awaiter(this, void 0, void 0, function* () {
+        try {
+            var datetime = new Date();
+            var date = datetime.getFullYear() + "/" + datetime.getMonth() + "/" + datetime.getDate();
+            var a = req.body.isactive == "true" ? 1 : 0;
+            if (!req.body.name) {
+                throw new Error("Please enter name");
+            }
+            else if (!req.body.email) {
+                throw new Error("Please enter email");
+            }
+            else if (!req.body.contact_number) {
+                throw new Error("Please enter PhoneNumber");
+            }
+            else {
+                var where = { user_id: req.params.userid, _id: req.params.addressid };
+                var newvalues = {
+                    $set: {
+                        name: req.body.name,
+                        email: req.body.email,
+                        contact_number: req.body.contact_number,
+                        is_active: a,
+                        create_date: date,
+                        is_deleted: 0
                     }
-                });
+                };
+                yield address.updateOne(where, newvalues);
+                var data = yield address.find({ _id: req.params.addressid });
+                res.status(200).json({ 'res': '0', 'msg': 'Data Updated Successfully', 'data': data });
             }
-        });
-    });
-    app.post("/update/:userid/:addressid", urlencodedParser, function (req, res) {
-        var act = req.body.active;
-        var uid = req.params.userid;
-        var addid = req.params.addressid;
-        var a = 0;
-        var date = datetime.getFullYear() + "/" + datetime.getMonth() + "/" + datetime.getDate();
-        if (act) {
-            a = 1;
         }
-        else {
-            a = 0;
+        catch (error) {
+            res.json({ 'res': '1', 'msg': error.message });
         }
-        var id = Number(req.params.addressid);
-        var usid = Number(req.params.userid);
-        var where = { address_id: id, user_id: usid };
-        var newvalues = { $set: { name: req.body.name, email: req.body.email, contact_number: req.body.contact_number, isactive: a, create_date: date, user_id: req.params.userid, is_deleted: 0 } };
-        address.updateOne(where, newvalues, function (err, result) {
-            if (err)
-                throw err;
-            else {
-                address.find({ address_id: id }, function (err, result) {
-                    res.json({ 'res': '0', 'msg': 'Successfully update', 'data': result });
-                });
-            }
-        });
-    });
-    app.get("/delete/:userid/:addressid", urlencodedParser, function (req, res) {
-        var where = Number(req.params.addressid);
-        var usid = Number(req.params.userid);
-        address.updateOne({ address_id: where, user_id: usid }, { $set: { is_deleted: 1 } }, function (err, result) {
-            if (err)
-                throw err;
-            if (result == null) {
-                res.json({ 'res': '1', 'msg': 'data not deleted' });
-            }
-            else {
-                console.log("successfully deleted");
-                res.json({ 'res': '0', 'msg': 'Successfully deleted' });
-            }
-        });
-    });
+    }));
+    app.delete("/removeAddressBook/:userid/:addressid", (req, res) => __awaiter(this, void 0, void 0, function* () {
+        try {
+            yield address.updateOne({ _id: req.params.addressid, user_id: req.params.userid }, { $set: { is_deleted: 1 } });
+            res.status(200).json({ 'res': '0', 'msg': 'Data Deleted successfully' });
+        }
+        catch (error) {
+            res.json({ 'res': '1', 'msg': error.message });
+        }
+    }));
 };

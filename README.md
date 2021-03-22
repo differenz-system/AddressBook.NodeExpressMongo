@@ -46,145 +46,180 @@ Go to package.json->Script :"start":"./server.js"
 ## API
 ###
 Registration:
-http://192.168.1.142:8800/registration
+http://192.168.1.105:8800/registration
 
 -req:
 ```
      {
-	"email":"om@gmail.com",
-	"password":"om"
+	"email":"john123@gmail.com",
+	"password":"john@123"
 	}
  ```
 -res:
 ```
 	{
-      "res":"0",
-       "msg":"successfully insert"
+      "res": "0",
+      "msg": "You are Successfully Registered.",
+      "data": 
+      {
+            "_id": "6058215ed902300329c86d3e",
+            "email": "john@gmail.com",
+            "user_id": "6058215ed902300329c86d3e"
+      }
     }
 	{
     "res": "1",
-    "msg": "use another email "
-	}
+    "msg": "Email already exists"
+    }
 ```
 
 ###
 login:
-http://192.168.1.142:8800/login
+http://192.168.1.105:8800/login
 
 -req:
 ```
     {
-        "email":"123@gmail.com",
-        "password":"123"
+        "email":"john@gmail.com",
+        "password":"john@123"
     }
 ```
 -res:
 ```
     {
-    "res": "0",
-    "msg": "Login User"
+          "res": "0",
+          "msg": "You are Successfully Logged in!",
+          "data": 
+          {
+              "_id": "6055e75470519f1031811a80",
+              "email": "john@gmail.com",
+             "user_id": "6055d191ed47810d4815ec07"
+
+          }
     }
     {
-    "res": "1",
-    "msg": "Incorreact Email or password"
+         "res": "1",
+         "msg": "Invalid Email or Password"
     }
 ```
 ###
 Display addressbook:
-http://192.168.1.142:8800/display/:user_id
+http://192.168.1.105:8800/getAddressBookByID/:userid
 
 -res:
 ```
-    {
+   {
     "res": "0",
-    "msg": [
-            {
-                "address_id": 3,
-                "name": "jb",
-                "email": "jb@gmail.com",
-                "contact_number": "7788445566",
-                "is_active": 0,
-                "create_date": "2018-07-30T18:30:00.000Z",
-                "user_id": 6,
-                "is_deleted": 0,
-            },
-            {
-                "address_id": 5,
-                "name": "hello world",
-                "email": "jjb@gmail.com",
-                "contact_number": "9988557788",
-                "is_active": 1,
-                "create_date": "2018-07-30T18:30:00.000Z",
-                "user_id": 6,
-                "is_deleted": 0
-            }
-        ]
-    }
+    "msg": "Successfully Displayed",
+    "data": [
+        {
+            "name": "Lata",
+            "email": "lata@gmail.com",
+            "contact_number": "7896541230",
+            "is_active": "0",
+            "create_date": "2021/2/20",
+            "user_id": "6055d191ed47810d4815ec07",
+            "is_deleted": 0,
+            "__v": 0
+        },
+        {
+            "name": "John",
+            "email": "john@gmail.com",
+            "contact_number": "7896541230",
+            "is_active": "0",
+            "create_date": "2021/2/22",
+            "user_id": "6055d191ed47810d4815ec07",
+            "is_deleted": 0,
+            "__v": 0
+        }
+    ]
+}
+
+If Address does not exist in a Address Book of a particular user.
+
+{
+    "res": "0",
+    "msg": "Successfully Displayed",
+    "data": []
+}
+
 ```
 ###
 Add Address
-http://localhost:8800/addaddress/:user_id
+http://192.168.1.105:8800/createAddressBook
 
 -req:
 ```
   {
-	"name":"jj",
-	"email":"jj@gmail.com",
-	"contact_number":"7894569874",
-	"is_active":true
-}
+    "name":"Harsh",
+    "email":"harsh123@gmail.com",
+    "contact_number":"9898243555",
+    "is_active":"true",
+    "userid":"6055e75470519f1031811a80"
+  }
 ```
 -res:
 ```
 {
     "res": "0",
-    "msg": "successfully insert address"
-}    }
+    "msg": "Data Saved Successfully",
+    "data": {
+        "_id": "6058255ad902300329c86d40",
+        "name": "Harsh",
+        "email": "harsh123@gmail.com",
+        "contact_number": "9898243555",
+        "is_active": "0",
+        "create_date": "2021/2/22",
+        "user_id": "6055e75470519f1031811a80",
+        "is_deleted": 0,
+        "__v": 0
+    }
 }
 ```
 ###
-Update Address
-http://192.168.1.142:8800/update/:user_id/addressid/:address_id
+Update Address 
+http://192.168.1.105:8800/updateAddressBook/:userid/:addressid
 
 -req:
 ```
-  {
-	"name":"sam",
-	"email":"sam@gmail.com",
-	"contact_number":"9977884455",
-	"is_active":true
+ {
+    "name":"John Sam",
+    "email":"john@gmail.com",
+    "contact_number":"8876567894",
+    "is_active":"0",
+    "create_date":"2021/2/22",
+    "is_deleted":0
 }
 ```
 -res:
 ```	
-     {
+   {
     "res": "0",
-    "msg": "Successfully update",
+    "msg": "Data Updated Successfully",
     "data": [
         {
-            "address_id": 55,
-            "name": "sam",
-            "email": "sam@gmail.com",
-            "contact_number": "9977884455",
-            "is_active": 0,
-            "create_date": "2018-08-09",
-            "user_id": 71,
-            "is_deleted": 0
+            "_id": "605847b8fe4a0e069417a4de",
+            "name": "John Sam",
+            "email": "john@gmail.com",
+            "contact_number": "8876567894",
+            "is_active": "0",
+            "create_date": "2021/2/22",
+            "user_id": "605846adfe4a0e069417a4db",
+            "is_deleted": 0,
+            "__v": 0
         }
     ]
-    }
+}
 ```
 ###
-Delete Address
-http://localhost:8800/delete/:user_id/address_id
+Remove Address
+http://192.168.1.105:8800/removeAddressBook/:userid/addressid
 
 -res
  ```
- {
-    {
+{
     "res": "0",
-    "msg": "successfully delete"
-     }
+    "msg": "Data Removed Successfully"
 }
 ```
 

@@ -1,23 +1,17 @@
 'use strict';
-
 var mongoose = require('mongoose');
-var uniqueValidator = require('mongoose-unique-validator');
-var user = mongoose.Schema({
-    user_id:{
-        type: Number,
-        unique:true
-    },
+var Schema = mongoose.Schema;
+
+var user = new Schema({
+    // user_id: Schema.Types.ObjectId,
     email: String,
     password: String,
-    external_id: Number,
     create_date: Date,
-    is_deleted:Number
-
+    is_deleted: Number
 },
- { collection: 'user' }
-, {
-    timestamps: false
-});
-user.index( { "email" : 1 }, { unique : true } )
-user.plugin(uniqueValidator);
+    { collection: 'user' },
+    {
+        timestamps: false
+    });
 module.exports = mongoose.model("user", user);
+

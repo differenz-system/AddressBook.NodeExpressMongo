@@ -1,59 +1,81 @@
-var express = require('express');
-var url = require('url');
-var bodyParser = require('body-parser');
-var md5 = require('md5');
-var connection = require('../configuration/mongoconfig');
-var rout = require('router');
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var user = require('../model/user_model');
-var server = require('../configuration/server');
-var datetime = new Date();
-var urlencodedParser = bodyParser.urlencoded({ extended: true });
-var app = express();
-app.use(rout);
-app.use(bodyParser.json());
-module.exports = function (app, db) {
-    app.post('/login', urlencodedParser, function (req, res) {
-        var ui = req.body.email;
-        var pas = req.body.password;
-        var pass = md5(req.body.password);
-        user.findOne({ email: req.body.email, password: pass }, function (err, result) {
-            if (err)
-                throw err;
-            if (result == null) {
-                res.json({ 'res': '1', 'msg': 'check email id or password' });
+module.exports = (app) => {
+    app.post('/login', (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        try {
+            if (!req.body.email) {
+                throw new Error("Please enter Email");
+            }
+            else if (!req.body.password) {
+                throw new Error("Please enter Password");
             }
             else {
-                res.json({ 'res': '0', 'msg': 'successfully login' });
-            }
-        });
-    });
-    app.post("/registration", urlencodedParser, function (req, res, next) {
-        var date = datetime.getFullYear() + "/" + datetime.getMonth() + "/" + datetime.getDate();
-        var id;
-        console.log(req.body.email);
-        var pass = md5(req.body.password);
-        console.log(user.find({}).sort({ _id: -1 }).limit(1));
-        user.aggregate([
-            { $sort: { "user_id": -1 } },
-            { $limit: 1 },
-            { $sort: { "user_id": 1 } },
-            { $limit: 1 }
-        ], function (err, result) {
-            if (err) {
-                next(err);
-            }
-            else {
-                id = result[0].user_id + 1;
-                var user_data = { user_id: id, email: req.body.email, password: pass, external_id: null, create_date: date };
-                user.create(user_data, function (err, rows, fields) {
-                    if (err) {
-                        res.json({ 'res': '1', 'msg': 'use another email ' });
-                    }
-                    else {
-                        res.json({ 'res': '0', 'msg': 'successfully insert' });
-                    }
+                var data = yield user.findOne({
+                    email: req.body.email,
+                    password: req.body.password
+                }, {
+                    "_id": 1,
+                    "email": 1,
+                    "password": 1
                 });
+                data = JSON.parse(JSON.stringify(data));
+                if (data == null) {
+                    res.json({ 'res': '1', 'msg': 'Invalid Email or Password' });
+                }
+                else {
+                    data["user_id"] = data._id;
+                    res.status(200).json({ 'res': '0', 'msg': 'You are Successfully Logged in!', 'data': data });
+                }
             }
-        });
-    });
+        }
+        catch (error) {
+            res.json({ 'res': '1', 'msg': error.message });
+        }
+    }));
+    app.post('/registration', (req, res) => __awaiter(this, void 0, void 0, function* () {
+        try {
+            var datetime = new Date();
+            var date = datetime.getFullYear() + "/" + datetime.getMonth() + "/" + datetime.getDate();
+            if (!req.body.email) {
+                throw new Error("Please enter Email");
+            }
+            else if (!req.body.password) {
+                throw new Error("Please enter Password");
+            }
+            else {
+                var query = yield user.findOne({ email: req.body.email });
+                if (query)
+                    res.json({ 'res': '1', 'msg': 'Email already exists' });
+                else {
+                    var result = yield user.create({
+                        email: req.body.email,
+                        password: req.body.password,
+                        create_date: date,
+                        is_deleted: 0
+                    });
+                    var data = yield user.findOne({
+                        email: req.body.email,
+                        password: req.body.password
+                    }, {
+                        "_id": 1,
+                        "email": 1
+                    });
+                    data = JSON.parse(JSON.stringify(data));
+                    data["user_id"] = data._id;
+                    res.status(200).json({ 'res': '0', 'msg': 'You are Successfully Registered.', 'data': data });
+                }
+            }
+        }
+        catch (error) {
+            res.json({ 'res': '1', 'msg': error.message });
+        }
+    }));
 };
