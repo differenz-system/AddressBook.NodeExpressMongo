@@ -51,7 +51,7 @@ http://192.168.1.105:8800/registration
 -req:
 ```
      {
-	"email":"john123@gmail.com",
+	"email":"john@gmail.com",
 	"password":"john@123"
 	}
  ```

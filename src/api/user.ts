@@ -68,16 +68,6 @@ module.exports = (app) => {
                     })
                     data = JSON.parse(JSON.stringify(data))
                     data["user_id"] = data._id
-                    // var data = await user.aggregate([
-                    //     { $match: { _id: result._id } },
-                    //     {
-                    //         $project: {
-                    //             "_id": 0,
-                    //             "user_id": "$_id",
-                    //             "email": 1
-                    //         }
-                    //     }
-                    // ])
                     res.status(200).json({ 'res': '0', 'msg': 'You are Successfully Registered.', 'data': data })
                 }
             }
