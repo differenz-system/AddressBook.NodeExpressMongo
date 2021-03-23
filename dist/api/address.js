@@ -21,7 +21,24 @@ module.exports = (app) => {
     }));
     app.get('/getAddressBookByID/:userid', (req, res) => __awaiter(this, void 0, void 0, function* () {
         try {
-            var data = yield address.find({ user_id: req.params.userid, is_deleted: 0 }, { "_id": 0 });
+            var data = yield address.find({
+                user_id: req.params.userid,
+                is_deleted: 0
+            }, {
+                "_id": 1,
+                "name": 1,
+                "email": 1,
+                "contact_number": 1,
+                "is_active": 1,
+                "create_date": 1,
+                "user_id": 1
+            });
+            data = JSON.parse(JSON.stringify(data));
+            if (data.length > 0) {
+                data.forEach(element => {
+                    element["address_id"] = element._id;
+                });
+            }
             res.json({ 'res': '0', 'msg': 'Successfully Displayed', 'data': data });
         }
         catch (error) {

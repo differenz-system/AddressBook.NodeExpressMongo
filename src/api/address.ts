@@ -5,18 +5,35 @@ var address = require('../model/address_model');
 module.exports = (app) => {
 
     //View whole Address Book
-    app.get('/getAddressBook',async(req,res)=>{
+    app.get('/getAddressBook', async (req, res) => {
         try {
-            var data=await address.find({},{"_id":0})
-            res.json({'res':'0','msg':'Address Book Displayed','data':data})  
+            var data = await address.find({}, { "_id": 0 })
+            res.json({ 'res': '0', 'msg': 'Address Book Displayed', 'data': data })
         } catch (error) {
-            res.json({'res':'1','msg':error.message})
+            res.json({ 'res': '1', 'msg': error.message })
         }
     })
     //View Address Book based on user_id.
     app.get('/getAddressBookByID/:userid', async (req, res) => {
         try {
-            var data = await address.find({ user_id: req.params.userid, is_deleted: 0 }, { "_id": 0 })
+            var data = await address.find({
+                user_id: req.params.userid,
+                is_deleted: 0
+            }, {
+                "_id": 1,
+                "name": 1,
+                "email": 1,
+                "contact_number": 1,
+                "is_active": 1,
+                "create_date": 1,
+                "user_id": 1
+            })
+            data = JSON.parse(JSON.stringify(data))
+            if (data.length > 0) {
+                data.forEach(element => {
+                    element["address_id"] = element._id
+                });
+            }
             res.json({ 'res': '0', 'msg': 'Successfully Displayed', 'data': data })
         } catch (error) {
             res.json({ 'res': '1', 'msg': error.message })
@@ -53,7 +70,7 @@ module.exports = (app) => {
             res.json({ 'res': '1', 'msg': error.message })
         }
     })
-    
+
     //Update Address Book
     app.put("/updateAddressBook/:userid/:addressid", async (req, res) => {
         try {
