@@ -117,4 +117,4 @@ module.exports = (app) => {
             res.json({ 'res': '1', 'msg': error.message })
         }
     });
-};
+}
