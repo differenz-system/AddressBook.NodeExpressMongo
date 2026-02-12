@@ -11,8 +11,8 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     next();
 });
-const temp = require("./route");
-temp(app);
+const route_1 = require("./route");
+route_1.default(app);
 var server = app.listen(8800, () => {
     var host = server.address().address;
     var port = server.address().port;

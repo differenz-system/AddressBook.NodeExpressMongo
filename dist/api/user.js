@@ -37,7 +37,7 @@ module.exports = (app) => {
             }
         }
         catch (error) {
-            res.json({ 'res': '1', 'msg': error.message });
+            res.json({ 'res': '1', 'error': error.message });
         }
     }));
     app.post('/registration', (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -75,7 +75,7 @@ module.exports = (app) => {
             }
         }
         catch (error) {
-            res.json({ 'res': '1', 'msg': error.message });
+            res.json({ 'res': '1', 'error': error.message });
         }
     }));
 };

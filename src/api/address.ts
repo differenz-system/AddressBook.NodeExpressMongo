@@ -2,19 +2,19 @@
 var user = require('../model/user_model');
 var address = require('../model/address_model');
 
-module.exports = (app) => {
+module.exports = (app: any) => {
 
     //View whole Address Book
-    app.get('/getAddressBook', async (req, res) => {
+    app.get('/getAddressBook', async (req: any, res: any) => {
         try {
             var data = await address.find({}, { "_id": 0 })
             res.json({ 'res': '0', 'msg': 'Address Book Displayed', 'data': data })
         } catch (error) {
-            res.json({ 'res': '1', 'msg': error.message })
+            res.json({ 'res': '1', 'error': (error as Error).message })
         }
     })
     //View Address Book based on user_id.
-    app.get('/getAddressBookByID/:userid', async (req, res) => {
+    app.get('/getAddressBookByID/:userid', async (req: any, res: any) => {
         try {
             var data = await address.find({
                 user_id: req.params.userid,
@@ -30,17 +30,17 @@ module.exports = (app) => {
             })
             data = JSON.parse(JSON.stringify(data))
             if (data.length > 0) {
-                data.forEach(element => {
+                data.forEach((element: any) => {
                     element["address_id"] = element._id
                 });
             }
             res.json({ 'res': '0', 'msg': 'Successfully Displayed', 'data': data })
         } catch (error) {
-            res.json({ 'res': '1', 'msg': error.message })
+            res.json({ 'res': '1', 'error': (error as Error).message })
         }
     })
     //Insert new record in Address Book (Insert Document)
-    app.post('/createAddressBook', async (req, res) => {
+    app.post('/createAddressBook', async (req: any, res: any) => {
         try {
             var datetime = new Date();
             var date = datetime.getFullYear() + "/" + datetime.getMonth() + "/" + datetime.getDate();
@@ -67,12 +67,12 @@ module.exports = (app) => {
                 res.status(200).json({ 'res': '0', 'msg': 'Data Saved Successfully', 'data': data })
             }
         } catch (error) {
-            res.json({ 'res': '1', 'msg': error.message })
+            res.json({ 'res': '1', 'error': (error as Error).message })
         }
     })
 
     //Update Address Book
-    app.put("/updateAddressBook/:userid/:addressid", async (req, res) => {
+    app.put("/updateAddressBook/:userid/:addressid", async (req: any, res: any) => {
         try {
             var datetime = new Date();
             var date = datetime.getFullYear() + "/" + datetime.getMonth() + "/" + datetime.getDate();
@@ -104,17 +104,17 @@ module.exports = (app) => {
                 res.status(200).json({ 'res': '0', 'msg': 'Data Updated Successfully', 'data': data })
             }
         } catch (error) {
-            res.json({ 'res': '1', 'msg': error.message })
+            res.json({ 'res': '1', 'error': (error as Error).message })
         }
     });
 
     //It Updates the IS_Deleted Flag to 1 i.e. It will soft delete the document from the collection.
-    app.delete("/removeAddressBook/:userid/:addressid", async (req, res) => {
+    app.delete("/removeAddressBook/:userid/:addressid", async (req: any, res: any) => {
         try {
             await address.updateOne({ _id: req.params.addressid, user_id: req.params.userid }, { $set: { is_deleted: 1 } })
             res.status(200).json({ 'res': '0', 'msg': 'Data Deleted successfully' })
         } catch (error) {
-            res.json({ 'res': '1', 'msg': error.message })
+            res.json({ 'res': '1', 'error': (error as Error).message })
         }
     });
 }

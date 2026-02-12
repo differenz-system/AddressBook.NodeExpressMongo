@@ -7,12 +7,7 @@ mongoose.connect(url, {
   useNewUrlParser: true //To avoid deprecated warning.
 }).then(() => {
   console.log("Successfully connected to the database");
-}).catch(err => {
+}).catch((err: any) => {
   console.log('Could not connect to the database. Exiting now...', err);
   process.exit();
 });
-
-
-
-
-

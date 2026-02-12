@@ -16,7 +16,7 @@ module.exports = (app) => {
             res.json({ 'res': '0', 'msg': 'Address Book Displayed', 'data': data });
         }
         catch (error) {
-            res.json({ 'res': '1', 'msg': error.message });
+            res.json({ 'res': '1', 'error': error.message });
         }
     }));
     app.get('/getAddressBookByID/:userid', (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -35,14 +35,14 @@ module.exports = (app) => {
             });
             data = JSON.parse(JSON.stringify(data));
             if (data.length > 0) {
-                data.forEach(element => {
+                data.forEach((element) => {
                     element["address_id"] = element._id;
                 });
             }
             res.json({ 'res': '0', 'msg': 'Successfully Displayed', 'data': data });
         }
         catch (error) {
-            res.json({ 'res': '1', 'msg': error.message });
+            res.json({ 'res': '1', 'error': error.message });
         }
     }));
     app.post('/createAddressBook', (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -73,7 +73,7 @@ module.exports = (app) => {
             }
         }
         catch (error) {
-            res.json({ 'res': '1', 'msg': error.message });
+            res.json({ 'res': '1', 'error': error.message });
         }
     }));
     app.put("/updateAddressBook/:userid/:addressid", (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -108,7 +108,7 @@ module.exports = (app) => {
             }
         }
         catch (error) {
-            res.json({ 'res': '1', 'msg': error.message });
+            res.json({ 'res': '1', 'error': error.message });
         }
     }));
     app.delete("/removeAddressBook/:userid/:addressid", (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -117,7 +117,7 @@ module.exports = (app) => {
             res.status(200).json({ 'res': '0', 'msg': 'Data Deleted successfully' });
         }
         catch (error) {
-            res.json({ 'res': '1', 'msg': error.message });
+            res.json({ 'res': '1', 'error': error.message });
         }
     }));
 };

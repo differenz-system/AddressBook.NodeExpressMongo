@@ -5,7 +5,7 @@ mongoose.connect(url, {
     useNewUrlParser: true
 }).then(() => {
     console.log("Successfully connected to the database");
-}).catch(err => {
+}).catch((err) => {
     console.log('Could not connect to the database. Exiting now...', err);
     process.exit();
 });

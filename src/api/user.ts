@@ -1,9 +1,9 @@
 
 var user = require('../model/user_model');
-module.exports = (app) => {
+module.exports = (app: any) => {
 
     //Login API
-    app.post('/login', async (req, res, next) => {
+    app.post('/login', async (req: any, res: any, next: any) => {
         try {
             if (!req.body.email) {
                 throw new Error("Please enter Email")
@@ -33,12 +33,12 @@ module.exports = (app) => {
             }
         }
         catch (error) {
-            res.json({ 'res': '1', 'msg': error.message })
+            res.json({ 'res': '1', 'error': (error as Error).message })
         }
     });
 
     //Registration API
-    app.post('/registration', async (req, res) => {
+    app.post('/registration', async (req: any, res: any) => {
         try {
             var datetime = new Date();
             var date = datetime.getFullYear() + "/" + datetime.getMonth() + "/" + datetime.getDate();
@@ -73,7 +73,7 @@ module.exports = (app) => {
             }
         }
         catch (error) {
-            res.json({ 'res': '1', 'msg': error.message })
+            res.json({ 'res': '1', 'error': (error as Error).message })
         }
     })
 }
